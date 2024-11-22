@@ -127,3 +127,37 @@ document.addEventListener('DOMContentLoaded', () => {
     createSnowflakes();
     loadOpenedBoxes();
 });
+// Function to reset all opened boxes
+function resetCalendar() {
+    // Clear localStorage for all days
+    for (let i = 1; i <= 24; i++) {
+        localStorage.removeItem(`day${i}Opened`);
+    }
+
+    // Remove the "open" class from all boxes
+    document.querySelectorAll('.calendar-box').forEach(box => {
+        box.classList.remove('open');
+    });
+
+    alert("Le calendrier a été réinitialisé !");
+}
+
+// Add a reset button to the DOM
+function addResetButton() {
+    const resetButton = document.createElement('button');
+    resetButton.textContent = 'Réinitialiser le calendrier';
+    resetButton.className = 'reset-button';
+    resetButton.addEventListener('click', resetCalendar);
+
+    // Append the button below the title
+    const title = document.querySelector('h1');
+    title.insertAdjacentElement('afterend', resetButton);
+}
+
+// Modify initialization to include reset button
+document.addEventListener('DOMContentLoaded', () => {
+    createCalendarBoxes();
+    createSnowflakes();
+    loadOpenedBoxes();
+    addResetButton(); // Add the reset button to the page
+});
