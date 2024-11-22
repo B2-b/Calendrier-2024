@@ -1,13 +1,29 @@
-// Calendar data structure
+// Calendar data structure with provided content
 const calendarData = [
-    // Example data structure for each day
-    {
-        day: 1,
-        text: "Welcome to day 1!",
-        image: "https://via.placeholder.com/150",
-        link: "https://example.com"
-    }
-    // Add more days following the same structure
+    { day: 1, text: "Le refuge des miettes", image: "1.jpg" },
+    { day: 2, text: "Le quartier général des ustensiles du quotidien", image: "2.jpg" },
+    { day: 3, text: "Là ou les apéros commencent", image: "3.jpg" },
+    { day: 4, text: "Là oú l'eau chaude fait chanter les arômes", image: "4.jpg" },
+    { day: 5, text: "Sous la lumière studieuse", image: "5.jpg" },
+    { day: 6, text: "Passera bientot de 2D à 3D", image: "6.jpg" },
+    { day: 7, text: "Je me cache au seuil de tous les départs", image: "7.jpg" },
+    { day: 8, text: "Là ou l'hiver cache ses trésors oubliés", image: "8.jpg" },
+    { day: 9, text: "Le royaume de la glace", image: "9.jpg" },
+    { day: 10, text: "Une cachette mobile pour un trésor immobile", image: "10.jpg" },
+    { day: 11, text: "Là ou les produits se bousculent pour briller", image: "11.jpg" },
+    { day: 12, text: "Un parfum de vécu s'y mélange", image: "12.jpg" },
+    { day: 13, text: "Dans le confort des plumes", image: "13.jpg" },
+    { day: 14, text: "Au royaume des racines", image: "14.jpg" },
+    { day: 15, text: "Au portail de téleportation des chaussettes", image: "15.jpg" },
+    { day: 16, text: "Au dela de ce qui te fixe", image: "16.jpg" },
+    { day: 17, text: "A mi chemin entre Vargas et Voltaire", image: "17.jpg" },
+    { day: 18, text: "Là ou le fromage fait la loi", image: "18.jpg" },
+    { day: 19, text: "Là ou chaque matin commence avec un choix", image: "19.jpg" },
+    { day: 20, text: "Là ou gauche et droite se retrouvent en cachette", image: "20.jpg" },
+    { day: 21, text: "Là ou les gateaux se lévent", image: "21.jpg" },
+    { day: 22, text: "L'antre des moutons … de poussière!", image: "22.jpg" },
+    { day: 23, text: "Elle fait danser les murs", image: "23.jpg" },
+    { day: 24, text: "La magie des repas y mijote lentement.", image: "24.jpg" }
 ];
 
 // Create snowflakes
@@ -43,6 +59,12 @@ function shuffleArray(array) {
     return array;
 }
 
+// Function to get box content for a specific day
+function getBoxContent(day) {
+    const boxData = calendarData.find(item => item.day === day);
+    return boxData || { text: "Surprise!", image: "placeholder.jpg" };
+}
+
 // Function to create calendar boxes
 function createCalendarBoxes() {
     const container = document.getElementById('calendarContainer');
@@ -60,12 +82,15 @@ function createCalendarBoxes() {
             box.classList.add('open');
         }
 
+        // Get box content
+        const boxContent = getBoxContent(day);
+
         box.innerHTML = `
             <div class="box-number">${day}</div>
             <div class="box-content">
-                <p>Merry Christmas! 🎄</p>
-                <img src="https://via.placeholder.com/150" alt="Day ${day}">
-                <a href="#" target="_blank">Open Your Gift 🎁</a>
+                <p>${boxContent.text}</p>
+                <img src="images/${boxContent.image}" alt="Day ${day}">
+                <a href="#" target="_blank">Ouvrir 🎁</a>
             </div>
         `;
 
@@ -86,12 +111,41 @@ function handleBoxClick(event) {
         box.classList.add('open');
         localStorage.setItem(`day${day}Opened`, 'true');
     } else {
-        alert("This gift can't be opened yet! Please wait until December " + day);
+        alert("Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le " + day + " décembre.");
     }
+}
+
+// Function to reset opened boxes
+function resetAdventCalendar() {
+    // Remove all opened states from localStorage
+    for (let i = 1; i <= 24; i++) {
+        localStorage.removeItem(`day${i}Opened`);
+    }
+
+    // Remove open class from all boxes
+    const boxes = document.querySelectorAll('.calendar-box');
+    boxes.forEach(box => {
+        box.classList.remove('open');
+    });
+
+    alert("Le calendrier de l'Avent a été réinitialisé !");
+}
+
+// Add reset button to the page
+function addResetButton() {
+    const resetButton = document.createElement('button');
+    resetButton.textContent = 'Réinitialiser le calendrier';
+    resetButton.className = 'reset-button';
+    resetButton.addEventListener('click', resetAdventCalendar);
+    
+    // Add button just after the title
+    const title = document.querySelector('h1');
+    title.insertAdjacentElement('afterend', resetButton);
 }
 
 // Initialize calendar when page loads
 document.addEventListener('DOMContentLoaded', () => {
     createCalendarBoxes();
     createSnowflakes();
+    addResetButton();
 });
