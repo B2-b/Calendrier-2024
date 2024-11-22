@@ -1,8 +1,8 @@
-// Calendar data structure with provided content
+// Calendar data
 const calendarData = [
     { day: 1, text: "Le refuge des miettes", image: "1.jpg" },
     { day: 2, text: "Le quartier général des ustensiles du quotidien", image: "2.jpg" },
-    { day: 3, text: "Là ou les apéros commencent", image: "3.jpg" },
+     { day: 3, text: "Là ou les apéros commencent", image: "3.jpg" },
     { day: 4, text: "Là oú l'eau chaude fait chanter les arômes", image: "4.jpg" },
     { day: 5, text: "Sous la lumière studieuse", image: "5.jpg" },
     { day: 6, text: "Passera bientot de 2D à 3D", image: "6.jpg" },
@@ -67,165 +67,69 @@ function getBoxContent(day) {
     return boxData || { text: "Surprise!", image: "placeholder.jpg" };
 }
 
-// Function to create calendar boxes
+// Create calendar boxes
 function createCalendarBoxes() {
     const container = document.getElementById('calendarContainer');
-    const days = Array.from({ length: 24 }, (_, i) => i + 1);
-    const shuffledDays = shuffleArray([...days]);
-
-    shuffledDays.forEach(day => {
+    calendarData.forEach(({ day, text, image }) => {
         const box = document.createElement('div');
-        box.className = 'calendar-box';
-        box.setAttribute('data-day', day);
+        box.classList.add('calendar-box');
+        box.dataset.day = day;
 
-        // Check if this box was previously opened
-        const isOpen = localStorage.getItem(`day${day}Opened`) === 'true';
-        if (isOpen) {
-            box.classList.add('open'); // Mark as opened
-        }
+        // Box number
+        const boxNumber = document.createElement('div');
+        boxNumber.classList.add('box-number');
+        boxNumber.textContent = day;
 
-        // Get box content
-        const boxData = getBoxContent(day);
-
-        // Populate box HTML
-        box.innerHTML = `
-            <div class="box-number">${day}</div>
-            <div class="box-content">
-                <p>${boxData.text}</p>
-                <a href="#" class="reveal-btn" data-day="${day}" data-image="${boxData.image}">Ouvrir 🎁</a>
-            </div>
+        // Hidden content
+        const boxContent = document.createElement('div');
+        boxContent.classList.add('box-content');
+        boxContent.innerHTML = `
+            <p>${text}</p>
+            <a href="${image}" target="_blank">Voir l'image 🎁</a>
         `;
 
-        // Add click event listener
-        box.addEventListener('click', handleBoxClick);
-
-        // Append to the container
+        // Append elements
+        box.appendChild(boxNumber);
+        box.appendChild(boxContent);
         container.appendChild(box);
 
-        // Ensure .box-content is hidden unless 'open'
-        if (!isOpen) {
-            box.querySelector('.box-content').style.display = 'none';
-        }
+        // Add click event
+        box.addEventListener('click', () => revealBox(box));
     });
-
-    // Create modal for image reveal
-    createImageModal();
 }
 
-// Function to handle box clicks
-function handleBoxClick(event) {
-    const box = event.currentTarget;
-    const day = parseInt(box.getAttribute('data-day'), 10);
+// Reveal box content
+function revealBox(box) {
+    if (box.classList.contains('open')) return; // Skip if already opened
+
+    const day = parseInt(box.dataset.day, 10);
     const today = new Date();
-    const november = 10; // November
-    const december = 11; // December (0-based)
+    const currentDay = today.getDate();
+    const currentMonth = today.getMonth();
 
-    if (today.getMonth() === november && today.getDate() >= day) {
-        box.classList.add('open');
-
-        // Show the content by setting its display to "flex"
-        const boxContent = box.querySelector('.box-content');
-        if (boxContent) {
-            boxContent.style.display = 'flex';
-        }
-
-        // Remove the box number when opening
-        const boxNumber = box.querySelector('.box-number');
-        if (boxNumber) {
-            boxNumber.style.display = 'none';
-        }
-
-        // Persist the open state
-        localStorage.setItem(`day${day}Opened`, 'true');
-    } else {
+    // Restrict based on date
+    if (currentMonth !== 11 || day > currentDay) {
         alert(`Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le ${day} décembre.`);
+        return;
     }
+
+    box.classList.add('open'); // Add open class
+    localStorage.setItem(`day${day}Opened`, 'true'); // Persist state
 }
 
-// Function to reset opened boxes
-function resetAdventCalendar() {
-    // Remove all opened states from localStorage
-    for (let i = 1; i <= 24; i++) {
-        localStorage.removeItem(`day${i}Opened`);
-    }
-
-    // Remove open class from all boxes
+// Load previously opened boxes
+function loadOpenedBoxes() {
     const boxes = document.querySelectorAll('.calendar-box');
     boxes.forEach(box => {
-        box.classList.remove('open');
-        // Restore box number
-        const boxNumber = box.querySelector('.box-number');
-        if (boxNumber) {
-            boxNumber.style.display = 'block';
-        }
-    });
-
-    alert("Le calendrier de l'Avent a été réinitialisé !");
-}
-
-// Create image modal
-function createImageModal() {
-    const modal = document.createElement('div');
-    modal.id = 'imageModal';
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <img id="modalImage" src="" alt="Advent Calendar Image">
-        </div>
-    `;
-    document.body.appendChild(modal);
-
-    // Add event listeners to reveal buttons
-    document.querySelectorAll('.reveal-btn').forEach(btn => {
-        btn.addEventListener('click', function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            const imageSrc = this.getAttribute('data-image');
-            const modal = document.getElementById('imageModal');
-            const modalImage = document.getElementById('modalImage');
-            
-            modalImage.src = imageSrc;
-            modal.style.display = 'block';
-        });
-    });
-
-    // Close modal when clicking close button
-    document.querySelector('.close-btn').addEventListener('click', () => {
-        document.getElementById('imageModal').style.display = 'none';
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', (event) => {
-        const modal = document.getElementById('imageModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
+        const day = parseInt(box.dataset.day, 10);
+        if (localStorage.getItem(`day${day}Opened`) === 'true') {
+            box.classList.add('open');
         }
     });
 }
 
-// Add reset button to the page
-function addResetButton() {
-    const resetButton = document.createElement('button');
-    resetButton.textContent = 'Réinitialiser le calendrier';
-    resetButton.className = 'reset-button';
-    resetButton.addEventListener('click', resetAdventCalendar);
-    
-    // Add button just after the title
-    const title = document.querySelector('h1');
-    title.insertAdjacentElement('afterend', resetButton);
-}
-
-// Initialize calendar when page loads
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     createCalendarBoxes();
-    createSnowflakes();
-    addResetButton();
-});
-// Initialize calendar when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    createCalendarBoxes();
-    createSnowflakes();
-    addResetButton();
+    loadOpenedBoxes();
 });
