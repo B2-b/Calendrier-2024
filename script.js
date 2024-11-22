@@ -81,7 +81,7 @@ function createCalendarBoxes() {
         boxContent.classList.add('box-content');
         boxContent.innerHTML = `
             <p>${text}</p>
-            <a href="${image}" target="_blank">Voir l'image 🎁</a>
+            <a href="${image}" target="_blank">Voir l'image du jour 🎁</a>
         `;
 
         box.appendChild(boxNumber);
@@ -103,7 +103,7 @@ function revealBox(box) {
     const currentMonth = today.getMonth();
 
     if (currentMonth !== 10 || day > currentDay) {
-        alert(`Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le ${day} décembre.`);
+        alert(`Petite curieuse !! Attends le ${day} décembre.`);
         return;
     }
 
