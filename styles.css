@@ -10,20 +10,37 @@ body {
     background: #1c3144;
     min-height: 100vh;
     padding: 20px;
-    background-image: 
-        radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2%, transparent 0%),
-        radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.2) 2%, transparent 0%);
+    background-image: radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2%, transparent 0%),
+                      radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.2) 2%, transparent 0%);
     background-size: 100px 100px;
     overflow-x: hidden;
+}
+
+/* Snowflake animation */
+@keyframes snowfall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.snowflake {
+    position: fixed;
+    color: white;
+    z-index: 1000;
+    animation: snowfall linear infinite;
 }
 
 /* Header styles */
 h1 {
     text-align: center;
-    color: #fff;
+    color: white;
     font-family: 'Mountains of Christmas', cursive;
     font-size: 3rem;
-    margin-bottom: 30px;
 }
 
 /* Calendar container */
@@ -36,13 +53,18 @@ h1 {
 /* Calendar box */
 .calendar-box {
     aspect-ratio: 1;
-    background: linear-gradient(135deg, #c62828 0%, #8b0000 100%);
+    background: linear-gradient(135deg, #c62828, #8b0000);
+    border: 2px solid #d4af37;
     border-radius: 15px;
     cursor: pointer;
-    border: 2px solid #d4af37;
     overflow: hidden;
     position: relative;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.calendar-box:hover {
+    transform: scale(1.05);
 }
 
 .box-number {
@@ -50,29 +72,40 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #fff;
+    color: white;
     font-size: 2.5rem;
     font-family: 'Mountains of Christmas', cursive;
 }
 
 /* Hidden content */
 .box-content {
-    display: none; /* Initially hidden */
+    display: none;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-    border-radius: 13px;
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    border-radius: 15px;
     padding: 20px;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    color: #fff;
+    align-items: center;
+    color: white;
 }
 
-/* Reveal content */
 .calendar-box.open .box-content {
-    display: flex; /* Show content only when the box is open */
+    display: flex;
+    animation: revealContent 0.5s ease;
+}
+
+@keyframes revealContent {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
