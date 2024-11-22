@@ -11,7 +11,7 @@ const calendarData = [
     { day: 9, text: "Le royaume de la glace", image: "9.jpg" },
     { day: 10, text: "Une cachette mobile pour un trésor immobile", image: "10.jpg" },
     { day: 11, text: "Là ou les produits se bousculent pour briller", image: "11.jpg" },
-    { day: 12, text: "Un parfum de vécu s'y mélange ", image: "12.jpg" },
+    { day: 12, text: "Un parfum de vécu s'y mélange", image: "12.jpg" },
     { day: 13, text: "Dans le confort des plumes", image: "13.jpg" },
     { day: 14, text: "Au royaume des racines", image: "14.jpg" },
     { day: 15, text: "Au portail de téleportation des chaussettes", image: "15.jpg" },
@@ -80,6 +80,9 @@ function createCalendarBoxes() {
 
         // Check if this box was previously opened
         const isOpen = localStorage.getItem(`day${day}Opened`) === 'true';
+        if (isOpen) {
+            box.classList.add('open');
+        }
 
         // Get box content
         const boxContent = getBoxContent(day);
@@ -91,16 +94,6 @@ function createCalendarBoxes() {
                 <a href="#" class="reveal-btn" data-day="${day}" data-image="${boxContent.image}">Ouvrir 🎁</a>
             </div>
         `;
-
-        // If previously opened, add open class and modify display
-        if (isOpen) {
-            box.classList.add('open');
-            const boxContentElement = box.querySelector('.box-content');
-            const boxNumberElement = box.querySelector('.box-number');
-            
-            boxContentElement.style.display = 'flex';
-            boxNumberElement.style.display = 'none';
-        }
 
         box.addEventListener('click', handleBoxClick);
         container.appendChild(box);
@@ -121,26 +114,19 @@ function handleBoxClick(event) {
     const day = parseInt(box.getAttribute('data-day'));
     const today = new Date();
     const november = 10;
+    const december = 11; // December is 11 (0-based months)
     
-    // Check if box is already open
-    if (box.classList.contains('open')) {
-        return;
-    }
-
     // Only allow opening if it's November 24 and the current day is >= the box day
-    // For testing, you might want to comment out this condition
     if (today.getMonth() === november && today.getDate() >= day) {
-        // Show box content
-        const boxContent = box.querySelector('.box-content');
-        const boxNumber = box.querySelector('.box-number');
-        
-        boxContent.style.display = 'flex';
-        boxNumber.style.display = 'none';
-        
         box.classList.add('open');
+        // Remove the box number when opening
+        const boxNumber = box.querySelector('.box-number');
+        if (boxNumber) {
+            boxNumber.style.display = 'none';
+        }
         localStorage.setItem(`day${day}Opened`, 'true');
     } else {
-        alert(`Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le ${day} décembre.`);
+        alert("Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le " + day + " décembre.");
     }
 }
 
@@ -219,6 +205,12 @@ function addResetButton() {
     title.insertAdjacentElement('afterend', resetButton);
 }
 
+// Initialize calendar when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    createCalendarBoxes();
+    createSnowflakes();
+    addResetButton();
+});
 // Initialize calendar when page loads
 document.addEventListener('DOMContentLoaded', () => {
     createCalendarBoxes();
