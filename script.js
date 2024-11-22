@@ -11,7 +11,7 @@ const calendarData = [
     { day: 9, text: "Le royaume de la glace", image: "9.jpg" },
     { day: 10, text: "Une cachette mobile pour un trésor immobile", image: "10.jpg" },
     { day: 11, text: "Là ou les produits se bousculent pour briller", image: "11.jpg" },
-    { day: 12, text: "Un parfum de vécu s'y mélange", image: "12.jpg" },
+    { day: 12, text: "Un parfum de vécu s'y mélange ", image: "12.jpg" },
     { day: 13, text: "Dans le confort des plumes", image: "13.jpg" },
     { day: 14, text: "Au royaume des racines", image: "14.jpg" },
     { day: 15, text: "Au portail de téleportation des chaussettes", image: "15.jpg" },
