@@ -91,8 +91,7 @@ function createCalendarBoxes() {
             <div class="box-number">${day}</div>
             <div class="box-content">
                 <p>${boxContent.text}</p>
-                <img src="${boxContent.image}" alt="Day ${day}">
-                <a href="#" class="reveal-btn" data-day="${day}">Ouvrir 🎁</a>
+                <a href="#" class="reveal-btn" data-day="${day}" data-image="${boxContent.image}">Ouvrir 🎁</a>
             </div>
         `;
 
@@ -106,6 +105,11 @@ function createCalendarBoxes() {
 
 // Function to handle box clicks
 function handleBoxClick(event) {
+    // Prevent handling if the reveal button was clicked
+    if (event.target.classList.contains('reveal-btn')) {
+        return;
+    }
+
     const box = event.currentTarget;
     const day = parseInt(box.getAttribute('data-day'));
     const today = new Date();
@@ -165,12 +169,12 @@ function createImageModal() {
         btn.addEventListener('click', function(event) {
             event.preventDefault();
             event.stopPropagation();
-            const day = this.getAttribute('data-day');
-            const boxContent = getBoxContent(parseInt(day));
             
+            const imageSrc = this.getAttribute('data-image');
             const modal = document.getElementById('imageModal');
             const modalImage = document.getElementById('modalImage');
-            modalImage.src = boxContent.image;
+            
+            modalImage.src = imageSrc;
             modal.style.display = 'block';
         });
     });
@@ -207,111 +211,3 @@ document.addEventListener('DOMContentLoaded', () => {
     createSnowflakes();
     addResetButton();
 });
-// Existing calendarData remains the same
-
-// Function to create calendar boxes
-function createCalendarBoxes() {
-    const container = document.getElementById('calendarContainer');
-    const days = Array.from({length: 24}, (_, i) => i + 1);
-    const shuffledDays = shuffleArray([...days]);
-    
-    shuffledDays.forEach(day => {
-        const box = document.createElement('div');
-        box.className = 'calendar-box';
-        box.setAttribute('data-day', day);
-
-        // Check if this box was previously opened
-        const isOpen = localStorage.getItem(`day${day}Opened`) === 'true';
-        if (isOpen) {
-            box.classList.add('open');
-        }
-
-        // Get box content
-        const boxContent = getBoxContent(day);
-
-        box.innerHTML = `
-            <div class="box-number">${day}</div>
-            <div class="box-content">
-                <p>${boxContent.text}</p>
-                <a href="#" class="reveal-btn" data-day="${day}" data-image="${boxContent.image}">Ouvrir 🎁</a>
-            </div>
-        `;
-
-        box.addEventListener('click', handleBoxClick);
-        container.appendChild(box);
-    });
-
-    // Create modal for image reveal
-    createImageModal();
-}
-
-// Function to handle box clicks
-function handleBoxClick(event) {
-    // Prevent handling if the reveal button was clicked
-    if (event.target.classList.contains('reveal-btn')) {
-        return;
-    }
-
-    const box = event.currentTarget;
-    const day = parseInt(box.getAttribute('data-day'));
-    const today = new Date();
-    const november = 10;
-    const december = 11; // December is 11 (0-based months)
-    
-    // Only allow opening if it's November 24 and the current day is >= the box day
-    if (today.getMonth() === november && today.getDate() >= day) {
-        box.classList.add('open');
-        // Remove the box number when opening
-        const boxNumber = box.querySelector('.box-number');
-        if (boxNumber) {
-            boxNumber.style.display = 'none';
-        }
-        localStorage.setItem(`day${day}Opened`, 'true');
-    } else {
-        alert("Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le " + day + " décembre.");
-    }
-}
-
-// Create image modal
-function createImageModal() {
-    const modal = document.createElement('div');
-    modal.id = 'imageModal';
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <img id="modalImage" src="" alt="Advent Calendar Image">
-        </div>
-    `;
-    document.body.appendChild(modal);
-
-    // Add event listeners to reveal buttons
-    document.querySelectorAll('.reveal-btn').forEach(btn => {
-        btn.addEventListener('click', function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            const imageSrc = this.getAttribute('data-image');
-            const modal = document.getElementById('imageModal');
-            const modalImage = document.getElementById('modalImage');
-            
-            modalImage.src = imageSrc;
-            modal.style.display = 'block';
-        });
-    });
-
-    // Close modal when clicking close button
-    document.querySelector('.close-btn').addEventListener('click', () => {
-        document.getElementById('imageModal').style.display = 'none';
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', (event) => {
-        const modal = document.getElementById('imageModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-}
-
-// The rest of the script remains the same as in the previous version
