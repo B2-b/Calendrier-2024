@@ -26,6 +26,15 @@ const calendarData = [
     { day: 24, text: "La magie des repas y mijote lentement.", image: "24.jpg" }
 ];
 
+// Function to shuffle array (Fisher-Yates algorithm)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 // Create snowflakes
 function createSnowflakes() {
     const numberOfSnowflakes = 100;
@@ -39,38 +48,25 @@ function createSnowflake() {
     snowflake.className = 'snowflake';
     snowflake.innerHTML = '❄️';
     snowflake.style.left = Math.random() * 100 + 'vw';
-    snowflake.style.top = '-10px'; // Start from top of the screen
-    snowflake.style.fontSize = (Math.random() * 10 + 5) + 'px'; // Varying sizes
+    snowflake.style.top = '-10px'; // Start from the top
+    snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
     snowflake.style.opacity = Math.random();
     snowflake.style.animationDuration = (Math.random() * 5 + 3) + 's';
     document.body.appendChild(snowflake);
 
-    // Remove snowflake after animation and create a new one
+    // Remove and recreate after animation
     snowflake.addEventListener('animationend', () => {
         snowflake.remove();
         createSnowflake();
     });
 }
 
-// Function to shuffle array (Fisher-Yates algorithm)
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
-// Function to get box content for a specific day
-function getBoxContent(day) {
-    const boxData = calendarData.find(item => item.day === day);
-    return boxData || { text: "Surprise!", image: "placeholder.jpg" };
-}
-
 // Create calendar boxes
 function createCalendarBoxes() {
     const container = document.getElementById('calendarContainer');
-    calendarData.forEach(({ day, text, image }) => {
+    const shuffledData = shuffleArray([...calendarData]);
+
+    shuffledData.forEach(({ day, text, image }) => {
         const box = document.createElement('div');
         box.classList.add('calendar-box');
         box.dataset.day = day;
@@ -88,39 +84,36 @@ function createCalendarBoxes() {
             <a href="${image}" target="_blank">Voir l'image 🎁</a>
         `;
 
-        // Append elements
         box.appendChild(boxNumber);
         box.appendChild(boxContent);
         container.appendChild(box);
 
-        // Add click event
+        // Click functionality
         box.addEventListener('click', () => revealBox(box));
     });
 }
 
 // Reveal box content
 function revealBox(box) {
-    if (box.classList.contains('open')) return; // Skip if already opened
+    if (box.classList.contains('open')) return;
 
     const day = parseInt(box.dataset.day, 10);
     const today = new Date();
     const currentDay = today.getDate();
     const currentMonth = today.getMonth();
 
-    // Restrict based on date
-    if (currentMonth !== 10 || day > currentDay) {
+    if (currentMonth !== 11 || day > currentDay) {
         alert(`Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le ${day} décembre.`);
         return;
     }
 
-    box.classList.add('open'); // Add open class
-    localStorage.setItem(`day${day}Opened`, 'true'); // Persist state
+    box.classList.add('open');
+    localStorage.setItem(`day${day}Opened`, 'true');
 }
 
 // Load previously opened boxes
 function loadOpenedBoxes() {
-    const boxes = document.querySelectorAll('.calendar-box');
-    boxes.forEach(box => {
+    document.querySelectorAll('.calendar-box').forEach(box => {
         const day = parseInt(box.dataset.day, 10);
         if (localStorage.getItem(`day${day}Opened`) === 'true') {
             box.classList.add('open');
@@ -131,5 +124,6 @@ function loadOpenedBoxes() {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     createCalendarBoxes();
+    createSnowflakes();
     loadOpenedBoxes();
 });
