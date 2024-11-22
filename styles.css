@@ -256,3 +256,24 @@ h1 {
 .close-btn:hover {
     color: #bbb;
 }
+.box-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    height: 100%;
+}
+
+.box-content p {
+    margin-bottom: 15px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.box-content a {
+    margin-top: auto;
+}
