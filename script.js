@@ -108,7 +108,7 @@ function revealBox(box) {
     const currentMonth = today.getMonth();
 
     // Restrict based on date
-    if (currentMonth !== 11 || day > currentDay) {
+    if (currentMonth !== 10 || day > currentDay) {
         alert(`Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le ${day} décembre.`);
         return;
     }
