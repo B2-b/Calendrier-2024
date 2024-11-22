@@ -92,15 +92,14 @@ function createCalendarBoxes() {
             </div>
         `;
 
-        // Initially hide the box content
-        const boxContentElement = box.querySelector('.box-content');
-        boxContentElement.style.display = 'none';
-
-        // If previously opened, show the content
+        // If previously opened, add open class and modify display
         if (isOpen) {
             box.classList.add('open');
+            const boxContentElement = box.querySelector('.box-content');
+            const boxNumberElement = box.querySelector('.box-number');
+            
             boxContentElement.style.display = 'flex';
-            box.querySelector('.box-number').style.display = 'none';
+            boxNumberElement.style.display = 'none';
         }
 
         box.addEventListener('click', handleBoxClick);
@@ -112,7 +111,38 @@ function createCalendarBoxes() {
 }
 
 // Function to handle box clicks
+function handleBoxClick(event) {
+    // Prevent handling if the reveal button was clicked
+    if (event.target.classList.contains('reveal-btn')) {
+        return;
+    }
 
+    const box = event.currentTarget;
+    const day = parseInt(box.getAttribute('data-day'));
+    const today = new Date();
+    const november = 10;
+    
+    // Check if box is already open
+    if (box.classList.contains('open')) {
+        return;
+    }
+
+    // Only allow opening if it's November 24 and the current day is >= the box day
+    // For testing, you might want to comment out this condition
+    if (today.getMonth() === november && today.getDate() >= day) {
+        // Show box content
+        const boxContent = box.querySelector('.box-content');
+        const boxNumber = box.querySelector('.box-number');
+        
+        boxContent.style.display = 'flex';
+        boxNumber.style.display = 'none';
+        
+        box.classList.add('open');
+        localStorage.setItem(`day${day}Opened`, 'true');
+    } else {
+        alert(`Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le ${day} décembre.`);
+    }
+}
 
 // Function to reset opened boxes
 function resetAdventCalendar() {
