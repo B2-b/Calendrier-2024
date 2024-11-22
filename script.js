@@ -70,9 +70,9 @@ function getBoxContent(day) {
 // Function to create calendar boxes
 function createCalendarBoxes() {
     const container = document.getElementById('calendarContainer');
-    const days = Array.from({length: 24}, (_, i) => i + 1);
+    const days = Array.from({ length: 24 }, (_, i) => i + 1);
     const shuffledDays = shuffleArray([...days]);
-    
+
     shuffledDays.forEach(day => {
         const box = document.createElement('div');
         box.className = 'calendar-box';
@@ -81,22 +81,31 @@ function createCalendarBoxes() {
         // Check if this box was previously opened
         const isOpen = localStorage.getItem(`day${day}Opened`) === 'true';
         if (isOpen) {
-            box.classList.add('open');
+            box.classList.add('open'); // Mark as opened
         }
 
         // Get box content
-        const boxContent = getBoxContent(day);
+        const boxData = getBoxContent(day);
 
+        // Populate box HTML
         box.innerHTML = `
             <div class="box-number">${day}</div>
             <div class="box-content">
-                <p>${boxContent.text}</p>
-                <a href="#" class="reveal-btn" data-day="${day}" data-image="${boxContent.image}">Ouvrir 🎁</a>
+                <p>${boxData.text}</p>
+                <a href="#" class="reveal-btn" data-day="${day}" data-image="${boxData.image}">Ouvrir 🎁</a>
             </div>
         `;
 
+        // Add click event listener
         box.addEventListener('click', handleBoxClick);
+
+        // Append to the container
         container.appendChild(box);
+
+        // Ensure .box-content is hidden unless 'open'
+        if (!isOpen) {
+            box.querySelector('.box-content').style.display = 'none';
+        }
     });
 
     // Create modal for image reveal
@@ -108,24 +117,27 @@ function handleBoxClick(event) {
     const box = event.currentTarget;
     const day = parseInt(box.getAttribute('data-day'), 10);
     const today = new Date();
-    const november = 10; // November is 10
-    const december = 11; // December is 11 (0-based months)
-    
-    // Allow clicking based on the current date
-    if (today.getMonth() === november && today.getDate() >= day) {
-        // Mark box as opened
-        box.classList.add('open');
-        
-        // Store the opened state in localStorage
-        localStorage.setItem(`day${day}Opened`, 'true');
+    const november = 10; // November
+    const december = 11; // December (0-based)
 
-        // Optionally, remove box number (fade it out visually)
+    if (today.getMonth() === november && today.getDate() >= day) {
+        box.classList.add('open');
+
+        // Show the content by setting its display to "flex"
+        const boxContent = box.querySelector('.box-content');
+        if (boxContent) {
+            boxContent.style.display = 'flex';
+        }
+
+        // Remove the box number when opening
         const boxNumber = box.querySelector('.box-number');
         if (boxNumber) {
             boxNumber.style.display = 'none';
         }
+
+        // Persist the open state
+        localStorage.setItem(`day${day}Opened`, 'true');
     } else {
-        // Alert if the box cannot be opened yet
         alert(`Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le ${day} décembre.`);
     }
 }
