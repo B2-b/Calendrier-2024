@@ -104,10 +104,11 @@ function handleBoxClick(event) {
     const box = event.currentTarget;
     const day = parseInt(box.getAttribute('data-day'));
     const today = new Date();
+    const november = 10;
     const december = 11; // December is 11 (0-based months)
     
     // Only allow opening if it's December and the current day is >= the box day
-    if (today.getMonth() === december && today.getDate() >= day) {
+    if (today.getMonth() === november && today.getDate() >= day) {
         box.classList.add('open');
         localStorage.setItem(`day${day}Opened`, 'true');
     } else {
