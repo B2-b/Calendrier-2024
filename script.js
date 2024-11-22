@@ -80,9 +80,6 @@ function createCalendarBoxes() {
 
         // Check if this box was previously opened
         const isOpen = localStorage.getItem(`day${day}Opened`) === 'true';
-        if (isOpen) {
-            box.classList.add('open');
-        }
 
         // Get box content
         const boxContent = getBoxContent(day);
@@ -95,6 +92,17 @@ function createCalendarBoxes() {
             </div>
         `;
 
+        // Initially hide the box content
+        const boxContentElement = box.querySelector('.box-content');
+        boxContentElement.style.display = 'none';
+
+        // If previously opened, show the content
+        if (isOpen) {
+            box.classList.add('open');
+            boxContentElement.style.display = 'flex';
+            box.querySelector('.box-number').style.display = 'none';
+        }
+
         box.addEventListener('click', handleBoxClick);
         container.appendChild(box);
     });
@@ -104,31 +112,7 @@ function createCalendarBoxes() {
 }
 
 // Function to handle box clicks
-function handleBoxClick(event) {
-    // Prevent handling if the reveal button was clicked
-    if (event.target.classList.contains('reveal-btn')) {
-        return;
-    }
 
-    const box = event.currentTarget;
-    const day = parseInt(box.getAttribute('data-day'));
-    const today = new Date();
-    const november = 10;
-    const december = 11; // December is 11 (0-based months)
-    
-    // Only allow opening if it's November 24 and the current day is >= the box day
-    if (today.getMonth() === november && today.getDate() >= day) {
-        box.classList.add('open');
-        // Remove the box number when opening
-        const boxNumber = box.querySelector('.box-number');
-        if (boxNumber) {
-            boxNumber.style.display = 'none';
-        }
-        localStorage.setItem(`day${day}Opened`, 'true');
-    } else {
-        alert("Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le " + day + " décembre.");
-    }
-}
 
 // Function to reset opened boxes
 function resetAdventCalendar() {
