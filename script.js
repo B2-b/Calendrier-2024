@@ -105,28 +105,28 @@ function createCalendarBoxes() {
 
 // Function to handle box clicks
 function handleBoxClick(event) {
-    // Prevent handling if the reveal button was clicked
-    if (event.target.classList.contains('reveal-btn')) {
-        return;
-    }
-
     const box = event.currentTarget;
-    const day = parseInt(box.getAttribute('data-day'));
+    const day = parseInt(box.getAttribute('data-day'), 10);
     const today = new Date();
-    const november = 10;
+    const november = 10; // November is 10
     const december = 11; // December is 11 (0-based months)
     
-    // Only allow opening if it's November 24 and the current day is >= the box day
+    // Allow clicking based on the current date
     if (today.getMonth() === november && today.getDate() >= day) {
+        // Mark box as opened
         box.classList.add('open');
-        // Remove the box number when opening
+        
+        // Store the opened state in localStorage
+        localStorage.setItem(`day${day}Opened`, 'true');
+
+        // Optionally, remove box number (fade it out visually)
         const boxNumber = box.querySelector('.box-number');
         if (boxNumber) {
             boxNumber.style.display = 'none';
         }
-        localStorage.setItem(`day${day}Opened`, 'true');
     } else {
-        alert("Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le " + day + " décembre.");
+        // Alert if the box cannot be opened yet
+        alert(`Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le ${day} décembre.`);
     }
 }
 
