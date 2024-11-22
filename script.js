@@ -28,7 +28,7 @@ const calendarData = [
 
 // Create snowflakes
 function createSnowflakes() {
-    const numberOfSnowflakes = 50;
+    const numberOfSnowflakes = 100;
     for (let i = 0; i < numberOfSnowflakes; i++) {
         createSnowflake();
     }
@@ -37,13 +37,15 @@ function createSnowflakes() {
 function createSnowflake() {
     const snowflake = document.createElement('div');
     snowflake.className = 'snowflake';
-    snowflake.innerHTML = '❄';
+    snowflake.innerHTML = '❄️';
     snowflake.style.left = Math.random() * 100 + 'vw';
-    snowflake.style.animation = `snowfall ${Math.random() * 3 + 2}s linear infinite`;
-    snowflake.style.animationDelay = Math.random() * 2 + 's';
+    snowflake.style.top = '-10px'; // Start from top of the screen
+    snowflake.style.fontSize = (Math.random() * 10 + 5) + 'px'; // Varying sizes
+    snowflake.style.opacity = Math.random();
+    snowflake.style.animationDuration = (Math.random() * 5 + 3) + 's';
     document.body.appendChild(snowflake);
 
-    // Remove snowflake after animation
+    // Remove snowflake after animation and create a new one
     snowflake.addEventListener('animationend', () => {
         snowflake.remove();
         createSnowflake();
@@ -89,14 +91,17 @@ function createCalendarBoxes() {
             <div class="box-number">${day}</div>
             <div class="box-content">
                 <p>${boxContent.text}</p>
-                <img src="images/${boxContent.image}" alt="Day ${day}">
-                <a href="#" target="_blank">Ouvrir 🎁</a>
+                <img src="${boxContent.image}" alt="Day ${day}">
+                <a href="#" class="reveal-btn" data-day="${day}">Ouvrir 🎁</a>
             </div>
         `;
 
         box.addEventListener('click', handleBoxClick);
         container.appendChild(box);
     });
+
+    // Create modal for image reveal
+    createImageModal();
 }
 
 // Function to handle box clicks
@@ -107,9 +112,14 @@ function handleBoxClick(event) {
     const november = 10;
     const december = 11; // December is 11 (0-based months)
     
-    // Only allow opening if it's December and the current day is >= the box day
+    // Only allow opening if it's November 24 and the current day is >= the box day
     if (today.getMonth() === november && today.getDate() >= day) {
         box.classList.add('open');
+        // Remove the box number when opening
+        const boxNumber = box.querySelector('.box-number');
+        if (boxNumber) {
+            boxNumber.style.display = 'none';
+        }
         localStorage.setItem(`day${day}Opened`, 'true');
     } else {
         alert("Ce cadeau ne peut pas être ouvert maintenant ! Veuillez attendre le " + day + " décembre.");
@@ -127,9 +137,56 @@ function resetAdventCalendar() {
     const boxes = document.querySelectorAll('.calendar-box');
     boxes.forEach(box => {
         box.classList.remove('open');
+        // Restore box number
+        const boxNumber = box.querySelector('.box-number');
+        if (boxNumber) {
+            boxNumber.style.display = 'block';
+        }
     });
 
     alert("Le calendrier de l'Avent a été réinitialisé !");
+}
+
+// Create image modal
+function createImageModal() {
+    const modal = document.createElement('div');
+    modal.id = 'imageModal';
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <img id="modalImage" src="" alt="Advent Calendar Image">
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    // Add event listeners to reveal buttons
+    document.querySelectorAll('.reveal-btn').forEach(btn => {
+        btn.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const day = this.getAttribute('data-day');
+            const boxContent = getBoxContent(parseInt(day));
+            
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = boxContent.image;
+            modal.style.display = 'block';
+        });
+    });
+
+    // Close modal when clicking close button
+    document.querySelector('.close-btn').addEventListener('click', () => {
+        document.getElementById('imageModal').style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        const modal = document.getElementById('imageModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 }
 
 // Add reset button to the page
