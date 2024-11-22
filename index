@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advent Calendar</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container styles */
+        .calendar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* Calendar box styles */
+        .calendar-box {
+            aspect-ratio: 1;
+            background: #2a2a2a;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .calendar-box:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Number display */
+        .box-number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Content styles (hidden by default) */
+        .box-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #3a3a3a;
+            border-radius: 10px;
+            padding: 15px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+        }
+
+        .box-content img {
+            max-width: 100%;
+            max-height: 150px;
+            margin: 10px 0;
+        }
+
+        .box-content a {
+            color: #4CAF50;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        /* Open state */
+        .calendar-box.open .box-content {
+            display: flex;
+            animation: revealContent 0.5s ease forwards;
+        }
+
+        /* Animation */
+        @keyframes revealContent {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .calendar-container {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .box-number {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar-container" id="calendarContainer">
+        <!-- Calendar boxes will be inserted here by JavaScript -->
+    </div>
+
+    <script>
+        // Calendar data structure
+        const calendarData = [
+            // Example data structure for each day
+            {
+                day: 1,
+                text: "Welcome to day 1!",
+                image: "https://via.placeholder.com/150",
+                link: "https://example.com"
+            }
+            // Add more days following the same structure
+        ];
+
+        // Function to shuffle array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to create calendar boxes
+        function createCalendarBoxes() {
+            const container = document.getElementById('calendarContainer');
+            const days = Array.from({length: 24}, (_, i) => i + 1);
+            const shuffledDays = shuffleArray([...days]);
+            
+            shuffledDays.forEach(day => {
+                const box = document.createElement('div');
+                box.className = 'calendar-box';
+                box.setAttribute('data-day', day);
+
+                // Check if this box was previously opened
+                const isOpen = localStorage.getItem(`day${day}Opened`) === 'true';
+                if (isOpen) {
+                    box.classList.add('open');
+                }
+
+                box.innerHTML = `
+                    <div class="box-number">${day}</div>
+                    <div class="box-content">
+                        <p>Content for day ${day}</p>
+                        <img src="https://via.placeholder.com/150" alt="Day ${day}">
+                        <a href="#" target="_blank">Learn more</a>
+                    </div>
+                `;
+
+                box.addEventListener('click', handleBoxClick);
+                container.appendChild(box);
+            });
+        }
+
+        // Function to handle box clicks
+        function handleBoxClick(event) {
+            const box = event.currentTarget;
+            const day = parseInt(box.getAttribute('data-day'));
+            const today = new Date();
+            const december = 11; // December is 11 (0-based months)
+            
+            // Only allow opening if it's December and the current day is >= the box day
+            if (today.getMonth() === december && today.getDate() >= day) {
+                box.classList.add('open');
+                localStorage.setItem(`day${day}Opened`, 'true');
+            } else {
+                alert("This door can't be opened yet! Please wait until December " + day);
+            }
+        }
+
+        // Initialize calendar when page loads
+        document.addEventListener('DOMContentLoaded', createCalendarBoxes);
+    </script>
+</body>
+</html>
