@@ -64,6 +64,8 @@ function createSnowflake() {
 // Create calendar boxes
 function createCalendarBoxes() {
     const container = document.getElementById('calendarContainer');
+    // Clear any existing content to avoid duplication
+    container.innerHTML = '';
     const shuffledData = shuffleArray([...calendarData]);
 
     shuffledData.forEach(({ day, text, image }) => {
