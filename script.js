@@ -83,7 +83,6 @@ function createCalendarBoxes() {
         boxContent.classList.add('box-content');
         boxContent.innerHTML = `
             <p>${text}</p>
-            <a href="${image}" target="_blank">Voir l'image du jour 🎁</a>
         `;
 
         box.appendChild(boxNumber);
