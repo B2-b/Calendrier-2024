@@ -1,6 +1,6 @@
 // Calendar data
 const calendarData = [
-    { day: 1, text: "Le refuge des miettes", image: "1.jpg" },
+    { day: 1, text: "Le refuge des miettes"},
     { day: 2, text: "Le quartier général des ustensiles du quotidien", image: "2.jpg" },
     { day: 3, text: "Là ou les apéros commencent", image: "3.jpg" },
     { day: 4, text: "Là oú l'eau chaude fait chanter les arômes", image: "4.jpg" },
@@ -104,7 +104,7 @@ function revealBox(box) {
     const currentDay = today.getDate();
     const currentMonth = today.getMonth();
 
-    if (currentMonth !== 10 || day > currentDay) {
+    if (currentMonth !== 11 || day > currentDay) {
         alert(`Petite curieuse !! Attends le ${day} décembre.`);
         return;
     }
